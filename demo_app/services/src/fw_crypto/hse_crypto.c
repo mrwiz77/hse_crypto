@@ -44,7 +44,7 @@ extern "C"{
 #include "hse_sessionkeys_example.h"
 #include "hse_UpdateNvmKeys_example.h"
 #include "hse_publish_keystore_RamToFlash_example.h"
-
+#include "hse_uart.h"
 /*
  * ============================================================================
  *                            LOCAL CONSTANTS
@@ -148,10 +148,13 @@ hseSrvResponse_t HSE_Crypto(void)
 //    /*run Fast Cmac with Counter Protocol */
 //    #if defined (HSE_SPT_MONOTONIC_COUNTERS) && defined (HSE_SPT_CMAC_WITH_COUNTER) && defined (HSE_SPT_FAST_CMAC)
 //    gCryptoServicesStarted|= FAST_CMAC_WITH_COUNTER_EXAMPLE_STARTED;
+	WHERE;
+	HSE_Uart_Printf("HSE_FastCmacwithCounter_Example sstart %d",1);
     srvResponse = HSE_FastCmacwithCounter_Example();
     if( HSE_SRV_RSP_OK == srvResponse)
     {
         gCryptoServicesExecuted |= FAST_CMAC_WITH_COUNTER_EXAMPLES_SUCCESS;
+        HSE_Uart_Printf("HSE_FastCmacwithCounter_Example sstart %s","FAST_CMAC_WITH_COUNTER_EXAMPLES_SUCCESS");
 		while(1)
 		{
 			int i = 0;

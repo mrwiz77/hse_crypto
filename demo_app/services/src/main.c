@@ -157,12 +157,12 @@ int main(void)
     HSE_Uart_WriteString("UART init ok\r\n");
     HSE_Uart_WriteChar('A');
 
-    print_uart_menu();
+    //print_uart_menu();
 
-    while(1)
-    {
-    	 wait_and_report_uart_char();
-    }
+    //while(1)
+    //{
+    //	 wait_and_report_uart_char();
+    //}
 
     /* Reserved bit checked for OTA_E to OTA_E update */
     fwversion[0].reserved = gHseFwVersion.reserved;
