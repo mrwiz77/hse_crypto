@@ -474,7 +474,9 @@ hseSrvResponse_t HSE_EraseKeys(void)
     memset(pHseSrvDesc, 0, sizeof(hseSrvDescriptor_t));
 
     // re-format the NVM and RAM catalogs
-    pHseSrvDesc->srvId = HSE_SRV_ID_ERASE_HSE_NVM_DATA;
+    //pHseSrvDesc->srvId = HSE_SRV_ID_ERASE_HSE_NVM_DATA;
+    pHseSrvDesc->srvId = HSE_SRV_ID_ERASE_KEY;
+	pHseSrvDesc->hseSrv.eraseKeyReq.keyHandle = HSE_INVALID_KEY_HANDLE;
     srvResponse = HSE_Send(0U, 1U, gSyncTxOption, pHseSrvDesc);
 
     ASSERT(HSE_SRV_RSP_OK == srvResponse);

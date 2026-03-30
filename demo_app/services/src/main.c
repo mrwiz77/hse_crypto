@@ -38,7 +38,6 @@ extern "C"
 #include "string.h"
 #include "hse_monotonic_cnt.h"
 #include "hse_sbaf_update.h"
-#include "hse_uart.h"
 
 /*=============================================================================
                             LOCAL MACROS
@@ -99,8 +98,6 @@ volatile bool_t fwudpate_only = FALSE;
 * ============================================================================
 */
 static void reset_tests(void);
-static void print_uart_menu(void);
-static void wait_and_report_uart_char(void);
 
 /* ============================================================================
 *                              LOCAL FUNCTIONS
@@ -134,50 +131,6 @@ int main(void)
     testStatus = NO_TEST_EXECUTED;
     bool_t key_status = FALSE;
 
-    /*
-     * UART test configuration
-     * - Instance  : LPUART6
-     * - Mode      : Polling TX/RX
-     * - TX pin    : PTA16
-     * - RX pin    : PTA15
-     * - Format    : 115200 bps, 8N1
-     * - Baud base : 48 MHz source clock assumption in hse_uart.c
-     *               (OSR = 16, SBR = 26)
-     *
-     * TX usage
-     * - HSE_Uart_WriteChar('A');
-     * - HSE_Uart_WriteString("UART init ok\r\n");
-     *
-     * RX usage
-     * - char receivedChar = HSE_Uart_GetCharBlocking();
-     * - HSE_Uart_GetCharBlocking() waits until one byte is received
-     *   and then returns the received character.
-     *
-     * Note
-     * - The while(1) loop above is a UART TX/RX verification path.
-     * - While this loop is enabled, the original HSE demo flow below is
-     *   not executed.
-     */
-
-
-    /* Mandatory UART initialization for LPUART6 before any TX/RX test. */
-    HSE_Uart_Init();
-
-    /* Temporary UART verification sequence starts here. */
-    HSE_Uart_WriteString("UART init ok\r\n");
-    HSE_Uart_WriteChar('A');
-
-    print_uart_menu();
-
-    while(1)
-    {
-    	 wait_and_report_uart_char();
-    }
-
-    /* Temporary UART verification sequence END here. */
-
-
-
     /* Reserved bit checked for OTA_E to OTA_E update */
     fwversion[0].reserved = gHseFwVersion.reserved;
 
@@ -202,16 +155,11 @@ int main(void)
     /* import keys for cryptographic operation and secure boot */
     HSE_DemoAppConfigKeys();
 
-
-
     /* After running test cases, run in infinite loop */
     while(1)
     {
         /* while(1) loop until any specific test is request to run from user */
-        while (!gRunExampleTest)
-        {
-
-        }
+        while (!gRunExampleTest);
 
         /* User Requested Monotonic Counter Operation */
         if (MONOTONIC_COUNTER == gProgramAttributes)
@@ -341,22 +289,6 @@ static void reset_tests(void)
     fwudpate_only = FALSE;
     ActivatePassiveBlock = FALSE;
     testStatus = (testStatus_t)(NO_TEST_EXECUTED|HSE_FW_USAGE_ENABLED);
-}
-
-static void print_uart_menu(void)
-{
-    HSE_Uart_WriteString("\r\n=== UART Menu ===\r\n");
-    HSE_Uart_WriteString("Type any character to verify UART RX.\r\n");
-    HSE_Uart_WriteString("> ");
-}
-
-static void wait_and_report_uart_char(void)
-{
-    char receivedChar = HSE_Uart_GetCharBlocking();
-
-    HSE_Uart_WriteString("\r\nInput [");
-    HSE_Uart_WriteChar(receivedChar);
-    HSE_Uart_WriteString("] received.\r\n> ");
 }
 
 #ifdef __cplusplus

@@ -10,6 +10,12 @@
 /*==================================================================================================
 *                                         INCLUDE FILES
 ==================================================================================================*/
+//#include <stdio.h>
+
+#include <stdarg.h>
+#include <stdint.h>
+
+
 #include "hse_uart.h"
 #include "std_typedefs.h"
 #include "S32K344.h"
@@ -30,6 +36,9 @@
 #define HSE_UART_TX_MUX_VALUE           (5U)
 #define HSE_UART_RX_INPUT_MUX_VALUE     (2U)
 
+#define UART_TX_BUFFER_SIZE (256)
+
+
 /*==================================================================================================
 *                                   LOCAL FUNCTION PROTOTYPES
 ==================================================================================================*/
@@ -40,6 +49,147 @@ static void HSE_Uart_ConfigController(void);
 /*==================================================================================================
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
+
+
+
+
+#define UART_TX_BUFFER_SIZE 256
+
+void HSE_Uart_WriteString(const char *pString);
+
+/* 내부 유틸 함수 */
+static void uart_putc(char **buf, char c)
+{
+    **buf = c;
+    (*buf)++;
+}
+
+static void uart_puts(char **buf, const char *str)
+{
+    while (*str)
+    {
+        uart_putc(buf, *str++);
+    }
+}
+
+static void uart_put_dec(char **buf, int value)
+{
+    char tmp[16];
+    int i = 0;
+
+    if (value == 0)
+    {
+        uart_putc(buf, '0');
+        return;
+    }
+
+    if (value < 0)
+    {
+        uart_putc(buf, '-');
+        value = -value;
+    }
+
+    while (value > 0)
+    {
+        tmp[i++] = (value % 10) + '0';
+        value /= 10;
+    }
+
+    while (i--)
+    {
+        uart_putc(buf, tmp[i]);
+    }
+}
+
+static void uart_put_hex(char **buf, unsigned int value)
+{
+    char tmp[16];
+    int i = 0;
+
+    if (value == 0)
+    {
+        uart_putc(buf, '0');
+        return;
+    }
+
+    while (value > 0)
+    {
+        int digit = value & 0xF;
+        tmp[i++] = (digit < 10) ? (digit + '0') : (digit - 10 + 'A');
+        value >>= 4;
+    }
+
+    while (i--)
+    {
+        uart_putc(buf, tmp[i]);
+    }
+}
+
+/* printf 대체 함수 */
+void HSE_Uart_Printf(const char *format, ...)
+{
+    static char buffer[UART_TX_BUFFER_SIZE];
+    char *p = buffer;
+
+    va_list args;
+    va_start(args, format);
+
+    while (*format)
+    {
+        if (*format == '%')
+        {
+            format++;
+
+            switch (*format)
+            {
+                case 'd':
+                {
+                    int val = va_arg(args, int);
+                    uart_put_dec(&p, val);
+                    break;
+                }
+                case 'x':
+                {
+                    unsigned int val = va_arg(args, unsigned int);
+                    uart_put_hex(&p, val);
+                    break;
+                }
+                case 's':
+                {
+                    char *str = va_arg(args, char *);
+                    uart_puts(&p, str);
+                    break;
+                }
+                case '%':
+                {
+                    uart_putc(&p, '%');
+                    break;
+                }
+                default:
+                {
+                    uart_putc(&p, '%');
+                    uart_putc(&p, *format);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            uart_putc(&p, *format);
+        }
+
+        format++;
+    }
+
+    *p = '\0';
+
+    va_end(args);
+
+    HSE_Uart_WriteString(buffer);
+}
+
+
+
 void HSE_Uart_Init(void)
 {
     HSE_Uart_EnableClock();
