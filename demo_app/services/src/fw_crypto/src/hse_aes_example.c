@@ -18,7 +18,7 @@
 ==================================================================================================*/
 
 #include "hse_aes_example.h"
-
+#include "hse_uart.h"
 
 /*==================================================================================================
                                  LOCAL VARIABLEs
@@ -65,7 +65,9 @@ hseSrvResponse_t HSE_Aes_Example(void)
 {
     hseKeyHandle_t aesEcbKeyHandle = HSE_DEMO_RAM_AES128_KEY0;
     hseSrvResponse_t srvResponse = HSE_SRV_RSP_GENERAL_ERROR;
-
+	extern  const uint8_t aesEcbKey2[] ;
+	extern  const uint32_t aesEcbKey2Length ;
+#if 0	
     /* import keys for AES operation before calling HSE_Aes_Example fn*/
     srvResponse = ImportPlainSymKeyReq(
             aesEcbKeyHandle ,
@@ -106,7 +108,7 @@ hseSrvResponse_t HSE_Aes_Example(void)
     {
         goto exit;
     }
-
+#endif
     /* --------- AES Fast CMAC Generate/Verify Requests with STM measuring (50 reqs) --------- */
     for (uint32_t i = 0; i < MAX_REQS_FOR_FAST_CMAC; i++)
     {
@@ -115,8 +117,29 @@ hseSrvResponse_t HSE_Aes_Example(void)
     /* enable timer before starting Fast CMAC key generate operation */
     EnableStm();
     /* Generate */
+	//SPSHIN
+	#if 0
+		AesNVMKeyHandle = aesEcbKeyHandle;
+	#endif
+
+	
+	HSE_Uart_Printf("CMAC FAST CMAC TEST START \r\n");
+	HSE_Uart_Printf("CMAC INPUT \r\n");
+	HSE_Uart_Printf("CMAC aesEcbKey2 \r\n");
+	HSE_Print_Array(aesEcbKey2, aesEcbKey2Length);
+
+	
+	HSE_Uart_Printf("CMAC aesEcbPlaintext \r\n");
+	HSE_Print_Array(aesEcbPlaintext, NUM_OF_ELEMS(aesEcbPlaintext));
+
+	HSE_Uart_Printf("CMAC aesEcbPlaintext \r\n");
+	HSE_Print_Array(aesEcbPlaintext, NUM_OF_ELEMS(aesEcbPlaintext));
     srvResponse = AesFastCmacGenerate(AesNVMKeyHandle,
     NUM_OF_ELEMS(aesEcbPlaintext)*8U, aesEcbPlaintext, (16U*8U), testoutput);
+
+	HSE_Uart_Printf("CMAC OUTPUT \r\n");
+	HSE_Uart_Printf("CMAC testoutput \r\n");
+	HSE_Print_Array(testoutput, 16U);
 
     /* get counter value and then disable timer */
     FastCmacGenerateTime = MeasureStm();
@@ -125,7 +148,7 @@ hseSrvResponse_t HSE_Aes_Example(void)
     /* calculate time when STM is derived from PLL of frequency 48MHz */
     TotalFastCmacGenerateTime += (FastCmacGenerateTime/48);
     if(HSE_SRV_RSP_OK != srvResponse)
-    goto exit;
+   		 goto exit;
 
     /* enable timer before starting Fast CMAC key verify operation */
     EnableStm();
@@ -136,8 +159,55 @@ hseSrvResponse_t HSE_Aes_Example(void)
     FastCmacVerifyTime = MeasureStm();
     DisbleStm();
     TotalFastCmacVerifyTime += (FastCmacVerifyTime/48);
+	
     if(HSE_SRV_RSP_OK != srvResponse)
-    goto exit;
+    	goto exit;
+
+	
+	HSE_Uart_Printf("CMAC ORG CMAC TEST START \r\n");
+	HSE_Uart_Printf("CMAC INPUT \r\n");
+	HSE_Uart_Printf("CMAC aesEcbKey2 \r\n");
+	HSE_Print_Array(aesEcbKey2, aesEcbKey2Length);
+
+	
+	HSE_Uart_Printf("CMAC aesEcbPlaintext \r\n");
+	HSE_Print_Array(aesEcbPlaintext, NUM_OF_ELEMS(aesEcbPlaintext));
+
+	HSE_Uart_Printf("CMAC aesEcbPlaintext \r\n");
+	HSE_Print_Array(aesEcbPlaintext, NUM_OF_ELEMS(aesEcbPlaintext));
+    srvResponse = AesCmacGenerate(AesNVMKeyHandle,
+    NUM_OF_ELEMS(aesEcbPlaintext)*8U, aesEcbPlaintext, (16U*8U), testoutput,0U);
+
+	HSE_Uart_Printf("CMAC OUTPUT \r\n");
+	HSE_Uart_Printf("CMAC testoutput \r\n");
+	HSE_Print_Array(testoutput, 16U);
+
+    /* get counter value and then disable timer */
+    FastCmacGenerateTime = MeasureStm();
+    DisbleStm();
+
+    /* calculate time when STM is derived from PLL of frequency 48MHz */
+    TotalFastCmacGenerateTime += (FastCmacGenerateTime/48);
+    if(HSE_SRV_RSP_OK != srvResponse)
+   		 goto exit;
+
+    /* enable timer before starting Fast CMAC key verify operation */
+    EnableStm();
+    /* Verify */
+    srvResponse = AesCmacVerify(AesNVMKeyHandle,
+    NUM_OF_ELEMS(aesEcbPlaintext)*8U, aesEcbPlaintext, (16U*8U), testoutput,0U);
+    /*get time and then disable timer*/
+    FastCmacVerifyTime = MeasureStm();
+    DisbleStm();
+    TotalFastCmacVerifyTime += (FastCmacVerifyTime/48);
+	
+    if(HSE_SRV_RSP_OK != srvResponse)
+    	goto exit;
+
+
+
+
+	
     }
 
     FastCmacGenerateTime = TotalFastCmacGenerateTime/MAX_REQS_FOR_FAST_CMAC;

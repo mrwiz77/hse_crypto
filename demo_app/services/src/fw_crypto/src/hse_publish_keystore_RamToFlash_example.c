@@ -33,12 +33,12 @@ static uint32_t stmTime_after_publish_key_srvid = 0;
 /*
 * @brief AES ECB keys
 */
-static const uint8_t aesEcbKey2[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
+ const uint8_t aesEcbKey2[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6,
                                         0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c};
 /*
 * @brief AES ECB keys data length
 */
-static const uint32_t aesEcbKey2Length = ARRAY_SIZE(aesEcbKey2);
+ const uint32_t aesEcbKey2Length = ARRAY_SIZE(aesEcbKey2);
 /*
 * @brief AES CCM keys
 */

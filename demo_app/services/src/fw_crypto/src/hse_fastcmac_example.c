@@ -71,6 +71,10 @@ hseSrvResponse_t HSE_FastCmacwithCounter_Example(void)
     {
         goto exit;
     }
+	//SPSHIN
+	#if 1
+		AesNVMKeyHandle =	HSE_DEMO_RAM_AES128_KEY0;
+	#endif 
     #ifdef HSE_SPT_CMAC_WITH_COUNTER
     /* Generate CMAC with Counter on Node A */
     srvResponse = CmacWithCounter(AesNVMKeyHandle, HSE_AUTH_DIR_GENERATE,TxnodecntIdx,0,

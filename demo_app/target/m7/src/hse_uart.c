@@ -36,7 +36,7 @@
 #define HSE_UART_TX_MUX_VALUE           (5U)
 #define HSE_UART_RX_INPUT_MUX_VALUE     (2U)
 
-#define UART_TX_BUFFER_SIZE (256)
+#define UART_TX_BUFFER_SIZE (512)
 
 
 /*==================================================================================================
@@ -50,10 +50,6 @@ static void HSE_Uart_ConfigController(void);
 *                                       GLOBAL FUNCTIONS
 ==================================================================================================*/
 
-
-
-
-#define UART_TX_BUFFER_SIZE 256
 
 void HSE_Uart_WriteString(const char *pString);
 
@@ -106,17 +102,23 @@ static void uart_put_hex(char **buf, unsigned int value)
     char tmp[16];
     int i = 0;
 
-    if (value == 0)
+    if (value == 0U)
     {
+        uart_putc(buf, '0');
         uart_putc(buf, '0');
         return;
     }
 
-    while (value > 0)
+    while (value > 0U)
     {
-        int digit = value & 0xF;
-        tmp[i++] = (digit < 10) ? (digit + '0') : (digit - 10 + 'A');
+        unsigned int digit = value & 0xFU;
+        tmp[i++] = (digit < 10U) ? (char)(digit + '0') : (char)(digit - 10U + 'A');
         value >>= 4;
+    }
+
+    while (i < 2)
+    {
+        tmp[i++] = '0';
     }
 
     while (i--)
@@ -188,7 +190,15 @@ void HSE_Uart_Printf(const char *format, ...)
     HSE_Uart_WriteString(buffer);
 }
 
-
+void HSE_Print_Array(const uint8_t *pdata,int length)
+{
+	int i = 0;
+	for( i = 0; i < length; i++) {
+		HSE_Uart_Printf("%x",pdata[i]);
+	}
+	HSE_Uart_Printf("\r\n");
+	
+}
 
 void HSE_Uart_Init(void)
 {

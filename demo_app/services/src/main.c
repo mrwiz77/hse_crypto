@@ -38,7 +38,7 @@ extern "C"
 #include "string.h"
 #include "hse_monotonic_cnt.h"
 #include "hse_sbaf_update.h"
-#include "hse_uart.h"
+
 /*=============================================================================
                             LOCAL MACROS
 ===========================================================================*/
@@ -126,43 +126,15 @@ static void reset_tests(void);
  *                           - example of base secure boot;
  *                           - Advanced secure boot;
  ******************************************************************************/
-
-
-static void print_uart_menu(void)
-{
-    HSE_Uart_WriteString("\r\n=== UART Menu ===\r\n");
-    HSE_Uart_WriteString("Type any character to verify UART RX.\r\n");
-    HSE_Uart_WriteString("> ");
-}
-static void wait_and_report_uart_char(void)
-{
-    char receivedChar = HSE_Uart_GetCharBlocking();
-
-    HSE_Uart_WriteString("\r\nInput [");
-    HSE_Uart_WriteChar(receivedChar);
-    HSE_Uart_WriteString("] received.\r\n> ");
-}
-
 int main(void)
 {
     testStatus = NO_TEST_EXECUTED;
     bool_t key_status = FALSE;
-
-
-
-    /* Mandatory UART initialization for LPUART6 before any TX/RX test. */
     HSE_Uart_Init();
 
     /* Temporary UART verification sequence starts here. */
     HSE_Uart_WriteString("UART init ok\r\n");
     HSE_Uart_WriteChar('A');
-
-    //print_uart_menu();
-
-    //while(1)
-    //{
-    //	 wait_and_report_uart_char();
-    //}
 
     /* Reserved bit checked for OTA_E to OTA_E update */
     fwversion[0].reserved = gHseFwVersion.reserved;
@@ -188,13 +160,18 @@ int main(void)
     /* import keys for cryptographic operation and secure boot */
     HSE_DemoAppConfigKeys();
 	
+	
+	
+	HSE_Uart_WriteString("UART init ok\r\n");
+	/*HSE crypto examples: sym/asym services; sync/async operation mode*/
+	gsrvResponse = HSE_Crypto();
+	
     /* After running test cases, run in infinite loop */
     while(1)
     {
 #if 0
         /* while(1) loop until any specific test is request to run from user */
         while (!gRunExampleTest);
-
 
         /* User Requested Monotonic Counter Operation */
         if (MONOTONIC_COUNTER == gProgramAttributes)
@@ -260,21 +237,13 @@ int main(void)
         }
 #endif
 
-		/*HSE crypto examples: sym/asym services; sync/async operation mode*/
-		gsrvResponse = HSE_Crypto();
-
-        //#if (defined(HSE_S32K388) && (HSE_S32K388 == HSE_PLATFORM))
-       // if(APP_RUN_ACE_TESTS == gRunExampleTest)
+        #if (defined(HSE_S32K388) && (HSE_S32K388 == HSE_PLATFORM)) 
+        if(APP_RUN_ACE_TESTS == gRunExampleTest)
         {
             /* HSE example for using AES_ACCEL: import AES_ACCEL keys with HSE and execute AES crypto operations with AES_ACCEL*/
             HSE_AesAccel();
         }
-        //#endif
-        while(1)
-        {
-        	int i = 0;
-        	i++;
-        }
+        #endif
 
         /*
         * User requested firmware update, following sequence for fw update:

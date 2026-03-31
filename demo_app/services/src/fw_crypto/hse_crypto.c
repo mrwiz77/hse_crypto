@@ -44,7 +44,7 @@ extern "C"{
 #include "hse_sessionkeys_example.h"
 #include "hse_UpdateNvmKeys_example.h"
 #include "hse_publish_keystore_RamToFlash_example.h"
-#include "hse_uart.h"
+
 /*
  * ============================================================================
  *                            LOCAL CONSTANTS
@@ -107,155 +107,147 @@ hseSrvResponse_t HSE_Crypto(void)
 
     /*Note: Keys for all below cryptographic operations have already
     * been imported in Generic_ImportKey() called in main() function*/
-//    #ifdef HSE_SPT_AES
-//    /*run AES related tests*/
-//    gCryptoServicesStarted|=AES_EXAMPLE_STARTED;
-//    srvResponse = HSE_Aes_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= AES_EXAMPLES_SUCCESS;
-//    }
-//     #endif
-//
-//    /*run HASH related tests*/
-//    gCryptoServicesStarted|=HASH_EXAMPLE_STARTED;
-//    srvResponse = HSE_HashAsync_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= HASH_EXAMPLES_SUCCESS;
-//    }
-//
-//    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
-//    /*run ECC related tests*/
-//    gCryptoServicesStarted|= ECC_KEYS_EXAMPLE_STARTED;
-//    srvResponse = HSE_Ecdsa_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= ECC_KEYS_EXAMPLES_SUCCESS;
-//    }
-//    #endif
-//
-//    #ifdef HSE_SPT_KEY_DERIVE
-//    /*run session key related tests*/
-//    gCryptoServicesStarted|= SESSION_KEY_EXAMPLE_STARTED;
-//    srvResponse = HSE_SessionKeys_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= SESSION_KEY_EXAMPLES_SUCCESS;
-//    }
-//    #endif
-//
-//    /*run Fast Cmac with Counter Protocol */
-//    #if defined (HSE_SPT_MONOTONIC_COUNTERS) && defined (HSE_SPT_CMAC_WITH_COUNTER) && defined (HSE_SPT_FAST_CMAC)
-//    gCryptoServicesStarted|= FAST_CMAC_WITH_COUNTER_EXAMPLE_STARTED;
-	WHERE;
-	HSE_Uart_Printf("HSE_FastCmacwithCounter_Example sstart %d",1);
+    #ifdef HSE_SPT_AES
+    /*run AES related tests*/
+    gCryptoServicesStarted|=AES_EXAMPLE_STARTED;
+    srvResponse = HSE_Aes_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= AES_EXAMPLES_SUCCESS;
+    }
+	return srvResponse;
+     #endif
+
+    /*run HASH related tests*/
+    gCryptoServicesStarted|=HASH_EXAMPLE_STARTED;
+    srvResponse = HSE_HashAsync_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= HASH_EXAMPLES_SUCCESS;
+    }
+
+    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
+    /*run ECC related tests*/
+    gCryptoServicesStarted|= ECC_KEYS_EXAMPLE_STARTED;
+    srvResponse = HSE_Ecdsa_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= ECC_KEYS_EXAMPLES_SUCCESS;
+    }
+    #endif
+
+    #ifdef HSE_SPT_KEY_DERIVE
+    /*run session key related tests*/
+    gCryptoServicesStarted|= SESSION_KEY_EXAMPLE_STARTED;
+    srvResponse = HSE_SessionKeys_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= SESSION_KEY_EXAMPLES_SUCCESS;
+    }
+    #endif
+
+    /*run Fast Cmac with Counter Protocol */
+    #if defined (HSE_SPT_MONOTONIC_COUNTERS) && defined (HSE_SPT_CMAC_WITH_COUNTER) && defined (HSE_SPT_FAST_CMAC)
+    gCryptoServicesStarted|= FAST_CMAC_WITH_COUNTER_EXAMPLE_STARTED;
     srvResponse = HSE_FastCmacwithCounter_Example();
     if( HSE_SRV_RSP_OK == srvResponse)
     {
         gCryptoServicesExecuted |= FAST_CMAC_WITH_COUNTER_EXAMPLES_SUCCESS;
-        HSE_Uart_Printf("HSE_FastCmacwithCounter_Example sstart %s","FAST_CMAC_WITH_COUNTER_EXAMPLES_SUCCESS");
-		while(1)
-		{
-			int i = 0;
-			i = i+ 1;
-			gCryptoServicesExecuted += i;
-		}
     }
-//    #endif
-//
-//    /*run Burmester Desmedt Protocol */
-//    #ifdef HSE_SPT_BURMESTER_DESMEDT
-//    gCryptoServicesStarted|= BURMESTER_DESMEDT_EXAMPLE_STARTED;
-//    srvResponse = HSE_BurmesterDesmedt_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= BURMESTER_DESMEDT_EXAMPLES_SUCCESS;
-//    }
-//    #endif
-//
-//    /*run sys authorization related tests*/
-//    #if defined(HSE_SPT_RSA) && defined(HSE_SPT_SHA2_512)
-//    gCryptoServicesStarted|=SYS_AUTHORIZATION_EXAMPLE_STARTED;
-//    srvResponse = HSE_SysAuthorization_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//    gCryptoServicesExecuted |= SYS_AUTHORIZATION_EXAMPLE_SUCCESS;
-//    }
-//    #endif
-//
-//    /*run update NVM keys related tests*/
-//    #ifdef HSE_SPT_GMAC
-//    gCryptoServicesStarted|=UPDATE_NVM_KEY_EXAMPLE_STARTED;
-//    srvResponse = HSE_UpdateNvmKey_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= UPDATE_NVM_KEY_EXAMPLE_SUCCESS;
-//    }
-//    #endif
-//
-//    /*run ECC Key Export related tests*/
-//    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
-//    gCryptoServicesStarted|= ECC_EXPORT_PUBLIC_KEY_STARTED;
-//    srvResponse = TestEccPublicKeyExportSuite();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= ECC_EXPORT_PUBLIC_KEY_SUCCESS;
-//    }
-//    #endif
-//
-//    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
-//    /*Importing of ECC public key using import key
-//    ECC signature verification using the public key imported*/
-//    gCryptoServicesStarted|= ECC_IMPORT_PUBLIC_KEY_SIGNATURE_VERIFICATION_STARTED;
-//    srvResponse = TestEcdsaVerifTestCase(ecdsaVerifTestCases+0);
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= ECC_IMPORT_PUBLIC_KEY_SIGNATURE_VERIFICATION_SUCCESS;
-//    }
-//    #endif
-//
-//    #ifdef HSE_SPT_AES
-//    /* Get Key Info: for AES keys*/
-//    gCryptoServicesStarted|=GET_KEY_INFO_STARTED;
-//    srvResponse = HSE_Get_Key_Info_Example();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= GET_KEY_INFO_SUCCESS;
-//    }
-//    #endif
-//
-//    #if defined(HSE_SPT_RSA) && (defined(HSE_SPT_RSAES_NO_PADDING)||defined(HSE_SPT_RSAES_OAEP)||defined(HSE_SPT_RSAES_PKCS1_V15))
-//    /* RSA Examples*/
-//    gCryptoServicesStarted|=RSA_EXAMPLE_STARTED;
-//    srvResponse =  HSE_RSA_Examples();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= RSA_EXAMPLE_SUCCESS;
-//    }
-//    #endif
-//
-//    #ifdef HSE_SPT_AEAD
-//    /*AEAD  Examples*/
-//    gCryptoServicesStarted|=AEAD_EXAMPLE_STARTED;
-//    srvResponse = HseAeadExamples();
-    //if( HSE_SRV_RSP_OK == srvResponse)
-    //{
-    //    gCryptoServicesExecuted |= AEAD_EXAMPLE_SUCCESS;
-    //}
-//    #endif
-//
-//    #ifdef HSE_SPT_PUBLISH_NVM_KEYSTORE_RAM_TO_FLASH
-//    gCryptoServicesStarted|=PUBLISH_KEYSTORE_RAMTOFLASH_EXAMPLE_STARTED;
-//    srvResponse = HSE_publish_keystore_RamToFlash_example_();
-//    if( HSE_SRV_RSP_OK == srvResponse)
-//    {
-//        gCryptoServicesExecuted |= PUBLISH_KEYSTORE_RAMTOFLASH_EXAMPLE_SUCCESS;
-//    }
-//    #endif
-//
-//    ASSERT( (uint8_t)gCryptoServicesStarted == (uint8_t)gCryptoServicesExecuted );
-//    testStatus |= CRYPTOGRAPHIC_SERVICES_SUCCESS;
+    #endif
+
+    /*run Burmester Desmedt Protocol */
+    #ifdef HSE_SPT_BURMESTER_DESMEDT
+    gCryptoServicesStarted|= BURMESTER_DESMEDT_EXAMPLE_STARTED;
+    srvResponse = HSE_BurmesterDesmedt_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= BURMESTER_DESMEDT_EXAMPLES_SUCCESS;
+    }
+    #endif
+
+    /*run sys authorization related tests*/
+    #if defined(HSE_SPT_RSA) && defined(HSE_SPT_SHA2_512)
+    gCryptoServicesStarted|=SYS_AUTHORIZATION_EXAMPLE_STARTED;
+    srvResponse = HSE_SysAuthorization_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+    gCryptoServicesExecuted |= SYS_AUTHORIZATION_EXAMPLE_SUCCESS;
+    }
+    #endif
+
+    /*run update NVM keys related tests*/
+    #ifdef HSE_SPT_GMAC
+    gCryptoServicesStarted|=UPDATE_NVM_KEY_EXAMPLE_STARTED;
+    srvResponse = HSE_UpdateNvmKey_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= UPDATE_NVM_KEY_EXAMPLE_SUCCESS;
+    }
+    #endif
+
+    /*run ECC Key Export related tests*/
+    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
+    gCryptoServicesStarted|= ECC_EXPORT_PUBLIC_KEY_STARTED;
+    srvResponse = TestEccPublicKeyExportSuite();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= ECC_EXPORT_PUBLIC_KEY_SUCCESS;
+    }
+    #endif
+
+    #ifdef HSE_SPT_ECC_COMPRESSED_KEYS
+    /*Importing of ECC public key using import key
+    ECC signature verification using the public key imported*/
+    gCryptoServicesStarted|= ECC_IMPORT_PUBLIC_KEY_SIGNATURE_VERIFICATION_STARTED;
+    srvResponse = TestEcdsaVerifTestCase(ecdsaVerifTestCases+0);
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= ECC_IMPORT_PUBLIC_KEY_SIGNATURE_VERIFICATION_SUCCESS;
+    }
+    #endif
+
+    #ifdef HSE_SPT_AES
+    /* Get Key Info: for AES keys*/
+    gCryptoServicesStarted|=GET_KEY_INFO_STARTED;
+    srvResponse = HSE_Get_Key_Info_Example();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= GET_KEY_INFO_SUCCESS;
+    }
+    #endif
+
+    #if defined(HSE_SPT_RSA) && (defined(HSE_SPT_RSAES_NO_PADDING)||defined(HSE_SPT_RSAES_OAEP)||defined(HSE_SPT_RSAES_PKCS1_V15))
+    /* RSA Examples*/
+    gCryptoServicesStarted|=RSA_EXAMPLE_STARTED;
+    srvResponse =  HSE_RSA_Examples();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= RSA_EXAMPLE_SUCCESS;
+    }
+    #endif
+
+    #ifdef HSE_SPT_AEAD
+    /*AEAD  Examples*/
+    gCryptoServicesStarted|=AEAD_EXAMPLE_STARTED;
+    srvResponse = HseAeadExamples();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= AEAD_EXAMPLE_SUCCESS;
+    }
+    #endif
+
+    #ifdef HSE_SPT_PUBLISH_NVM_KEYSTORE_RAM_TO_FLASH
+    gCryptoServicesStarted|=PUBLISH_KEYSTORE_RAMTOFLASH_EXAMPLE_STARTED;
+    srvResponse = HSE_publish_keystore_RamToFlash_example_();
+    if( HSE_SRV_RSP_OK == srvResponse)
+    {
+        gCryptoServicesExecuted |= PUBLISH_KEYSTORE_RAMTOFLASH_EXAMPLE_SUCCESS;
+    }
+    #endif
+
+    ASSERT( (uint8_t)gCryptoServicesStarted == (uint8_t)gCryptoServicesExecuted );
+    testStatus |= CRYPTOGRAPHIC_SERVICES_SUCCESS;
     return srvResponse;
 }
 

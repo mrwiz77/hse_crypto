@@ -27,6 +27,8 @@ void HSE_Uart_WriteChar(char c);
 void HSE_Uart_WriteString(const char *pString);
 char HSE_Uart_GetCharBlocking(void);
 void HSE_Uart_Printf(const char *format, ...);
+void HSE_Print_Array(const uint8_t *pdata,int length);
+
 #define WHERE HSE_Uart_Printf("%s %d ",__func__,__LINE__);
 #ifdef __cplusplus
 }
